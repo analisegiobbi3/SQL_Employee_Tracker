@@ -1,4 +1,11 @@
 const inquirer = require('inquirer')
+const Department = require('./lib/Department')
+const Employee = require('./lib/Employee')
+const Role = require('./lib/Role')
+
+function init(){
+    viewOptions();
+}
 
 const viewOptions = () => {
     return inquirer.prompt ([
@@ -8,7 +15,22 @@ const viewOptions = () => {
             message: 'Query options: ',
             choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role'],
         },
-    ])
+    ]).then(function(input){
+        switch(input.tableOptions){
+            case "add a department":
+                addDepartment()
+                break
+            case "add a role":
+                addRole()
+                break
+            case "add an employee":
+                addEmployee()
+                break
+            case "update an employee role":
+                updateEmployee()
+                break
+        }
+    })
 };
 
 
@@ -76,3 +98,5 @@ const addEmployee = () =>{
 const updateEmployee = () =>{
     
 }
+
+init();
