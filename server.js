@@ -42,6 +42,10 @@ const addDepartment = () => {
             message: 'Enter department name: ',
         },
     ])
+    .then(newDepartment =>{
+        const { departmentName } = newDepartment
+        const createDepartment = new Department(departmentName)
+    })
 };
 
 const addRole = () =>{
@@ -64,6 +68,10 @@ const addRole = () =>{
             message: 'Enter employee department: ',
         },
     ])
+    .then(newRole =>{
+        const { name, salary, department } = newRole
+        const createRole = new Role(name, salary, department)
+    })
 };
 
 const addEmployee = () =>{
@@ -92,6 +100,10 @@ const addEmployee = () =>{
             message: 'Enter employee manager: ',
         },
     ])
+    .then(newEmployee =>{
+        const { firstName, lastName, role, manager } = newEmployee
+        const createEmployee = new Employee(firstName, lastName, role, manager)
+    })
     
 }
 
