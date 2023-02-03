@@ -45,13 +45,13 @@ const viewOptions = () => {
     ]).then(function({ tableOptions }){
         switch(tableOptions){
             case 'view all departments':
-                //add function
+                viewAllDep();
                 break
             case 'view all roles':
-                //addfunction
+                viewAllRole();
                 break
             case 'view all employees':
-                //add function
+                viewAllEmployee();
                 break
             case "add a department":
                 addDepartment()
@@ -72,6 +72,31 @@ const viewOptions = () => {
     })
 };
 
+const viewAllDep = () => {
+   const departmentQuery = 'SELECT * FROM department;'
+   db.query(departmentQuery, (req, res) =>{
+        console.log(res);
+        viewOptions()
+   })
+
+}
+
+const viewAllRole = () => {
+    const roleQuery = 'SELECT * FROM role;'
+    db.query(roleQuery, (req, res) =>{
+         console.log(res);
+         viewOptions()
+    })
+ }
+
+ const viewAllEmployee = () => {
+    const employeeQuery = 'SELECT * FROM employee;'
+    db.query(employeeQuery, (req, res) =>{
+         console.log(res);
+         viewOptions()
+    })
+ }
+
 
 const addDepartment = () => {
     return inquirer.prompt ([
@@ -82,8 +107,11 @@ const addDepartment = () => {
         },
     ])
     .then(newDepartment =>{
-        const { departmentName } = newDepartment
-        const createDepartment = new Department(departmentName)
+        db.query('INSERT INTO department (name) VALUES (?)', [newDepartment.departmentName], (req, res =>{
+            console.log(res)
+            viewOptions()
+        }))
+
     })
 };
 
@@ -108,8 +136,11 @@ const addRole = () =>{
         },
     ])
     .then(newRole =>{
-        const { name, salary, department } = newRole
-        const createRole = new Role(name, salary, department)
+        db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [newRole.name, newRole.salary, newRole.department], (req, res) =>{
+            console.log(res);
+            viewOptions()
+        })
+
     })
 };
 
@@ -140,15 +171,19 @@ const addEmployee = () =>{
         },
     ])
     .then(newEmployee =>{
-        const { firstName, lastName, role, manager } = newEmployee
-        const createEmployee = new Employee(firstName, lastName, role, manager)
+        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [newEmployee.firstName, newEmployee.lastName, newEmployee.role, newEmployee.manager], (req, res) =>{
+            console.log(res)
+            viewOptions()
+        })
+
     })
     
 }
+
+ 
 
 const updateEmployee = () =>{
     
 }
 
-init();
 
