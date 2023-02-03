@@ -1,4 +1,5 @@
 const inquirer = require('inquirer')
+const mysql = require('mysql2');
 const Department = require('./lib/Department')
 const Employee = require('./lib/Employee')
 const Role = require('./lib/Role')
@@ -13,7 +14,7 @@ const viewOptions = () => {
             type: 'list',
             name: 'tableOptions',
             message: 'Query options: ',
-            choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role'],
+            choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role', 'quit'],
         },
     ]).then(function(input){
         switch(input.tableOptions){
@@ -28,6 +29,8 @@ const viewOptions = () => {
                 break
             case "update an employee role":
                 updateEmployee()
+                break
+            case "quit":
                 break
         }
     })
@@ -112,3 +115,17 @@ const updateEmployee = () =>{
 }
 
 init();
+
+//you will need this somehwere in the code
+// // Connect to database
+// const db = mysql.createConnection(
+//     {
+//       host: 'localhost',
+//       // MySQL username,
+//       user: 'root',
+//       // TODO: Add MySQL password
+//       password: '',
+//       database: 'books_db'
+//     },
+//     console.log(`Connected to the books_db database.`)
+//   );
