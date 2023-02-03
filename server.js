@@ -1,5 +1,6 @@
-const inquirer = require('inquirer')
+const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 
 // Connect to database taken from sql lessions
@@ -63,7 +64,7 @@ const viewOptions = () => {
                 addEmployee()
                 break
             case "update an employee role":
-                updateEmployee()
+                updateEmployeeRole()
                 break
             case "quit":
                 db.end()
@@ -204,8 +205,29 @@ const addEmployee = () =>{
 }
 
 
-const updateEmployee = () =>{
-    
+const updateEmployeeRole = () => {
+    return inquirer.prompt ([
+        {
+            type: "input",
+            message: "Which employee do you want to update? ",
+            name: "employeeUpdate"
+        },
+        {
+            type: "input",
+            message: "What is their new role?",
+            name: "roleUpdate"
+        },
+    ])
+    .then(newRoleUpdate => {
+        db.query('UPDATE employee SET role_id = ? WHERE first_name = ?', [newRoleUpdate.roleUpdate, newRoleUpdate.employeeUpdate], (err, res) =>{
+            if (err){
+                console.log(err)
+            }else{
+                console.table(res)
+                viewOptions()
+            }
+        })
+    }) 
 }
 
 
