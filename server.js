@@ -74,26 +74,38 @@ const viewOptions = () => {
 
 const viewAllDep = () => {
    const departmentQuery = 'SELECT * FROM department;'
-   db.query(departmentQuery, (req, res) =>{
-        console.log(res);
-        viewOptions()
+   db.query(departmentQuery, (err, res) =>{
+        if (err){
+            console.log(err)
+        }else{
+            console.table(res);
+            viewOptions()
+        }
    })
 
 }
 
 const viewAllRole = () => {
     const roleQuery = 'SELECT * FROM role;'
-    db.query(roleQuery, (req, res) =>{
-         console.log(res);
-         viewOptions()
+    db.query(roleQuery, (err, res) =>{
+        if (err){
+            console.log(err)
+        }else{
+            console.table(res);
+            viewOptions()
+        }
     })
  }
 
  const viewAllEmployee = () => {
     const employeeQuery = 'SELECT * FROM employee;'
-    db.query(employeeQuery, (req, res) =>{
-         console.log(res);
-         viewOptions()
+    db.query(employeeQuery, (err, res) =>{
+        if (err){
+            console.log(err)
+        }else{
+            console.table(res);
+            viewOptions()
+        }
     })
  }
 
@@ -107,11 +119,14 @@ const addDepartment = () => {
         },
     ])
     .then(newDepartment =>{
-        db.query('INSERT INTO department (name) VALUES (?)', [newDepartment.departmentName], (req, res =>{
-            console.log(res)
-            viewOptions()
-        }))
-
+        db.query('INSERT INTO department (name) VALUES (?)', [newDepartment.departmentName], (err, res) =>{
+            if (err){
+                console.log(err)
+            }else{
+                console.table(res);
+                viewOptions()
+            }
+        })
     })
 };
 
@@ -136,9 +151,13 @@ const addRole = () =>{
         },
     ])
     .then(newRole =>{
-        db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [newRole.name, newRole.salary, newRole.department], (req, res) =>{
-            console.log(res);
-            viewOptions()
+        db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [newRole.name, newRole.salary, newRole.department], (err, res) =>{
+            if (err){
+                console.log(err)
+            }else{
+                console.table(res);
+                viewOptions()
+            }
         })
 
     })
@@ -171,16 +190,19 @@ const addEmployee = () =>{
         },
     ])
     .then(newEmployee =>{
-        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [newEmployee.firstName, newEmployee.lastName, newEmployee.role, newEmployee.manager], (req, res) =>{
-            console.log(res)
-            viewOptions()
+        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [newEmployee.firstName, newEmployee.lastName, newEmployee.role, newEmployee.manager], (err, res) =>{
+            if (err){
+                console.log(err)
+            }else{
+                console.table(res);
+                viewOptions()
+            }
         })
 
     })
     
 }
 
- 
 
 const updateEmployee = () =>{
     
