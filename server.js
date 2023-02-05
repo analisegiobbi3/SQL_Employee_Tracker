@@ -58,13 +58,13 @@ const viewOptions = () => {
                 addDepartment()
                 break
             case "add a role":
-                addRole()
+                getExistingDepartments();
                 break
             case "add an employee":
                 getExistingRoles();
                 break
             case "update an employee role":
-                updateEmployeeRole()
+                getExistingEmployees()
                 break
             case "quit":
                 db.end()
@@ -134,7 +134,25 @@ const addDepartment = () => {
     })
 };
 
-const addRole = () =>{
+const getExistingDepartments = () => {
+    const departmentQuery = 'SELECT id, name FROM department'
+
+    db.query(departmentQuery, (err, res) => {
+        if (err){
+            console.log(err)
+        }else{
+            const departments  = res.map(({ id, name}) => ({
+                value: id, name: `${name}`
+            }))
+            console.table(res)
+            addRole(departments)
+        }
+
+    })
+
+}
+
+const addRole = (departments) =>{
     return inquirer.prompt ([
         {
             type: 'input',
@@ -149,9 +167,10 @@ const addRole = () =>{
         },
 
         {
-            type: 'input',
+            type: 'list',
             name: 'department',
-            message: 'Enter employee department: ',
+            message: 'Choose employee department by id: ',
+            choices: departments
         },
     ])
     .then(newRole =>{
@@ -174,7 +193,7 @@ const getExistingRoles = () => {
         if (err){
             console.log(err)
         }else{
-            const roles = res.map(({ title }) => ({
+            const roles = res.map(({ id, title, salary }) => ({
                 value: id, title: `${title}`, salary: `${salary}`
             }))
             console.table(res)
@@ -225,20 +244,51 @@ const addEmployee = (roles) =>{
     
 }
 
+const getExistingEmployees = () => {
+    const employeeQuery = 'SELECT * FROM employee JOIN role ON employee.role_id = role.id'
 
+    db.query(employeeQuery, (err, res) => {
+        if (err){
+            console.log(err)
+        }else{
+            const employees  = res.map(({ id, first_name, last_name}) => ({
+                value: id, first_name: `${first_name}`, last_name: `${last_name}`
+            }))
+            console.table(res)
+            getEmployeeRoles(employees)
+        }
+    })
+}
 
+const getEmployeeRoles = (employees) => {
+    const rolequery  = 'SELECT id, title, salary FROM role'
 
-const updateEmployeeRole = () => {
+    db.query(rolequery, (err, res) =>{
+        if (err){
+            console.log(err)
+        }else{
+            const roles = res.map(({ id, title, salary }) => ({
+                value: id, title: `${title}`, salary: `${salary}`
+            }))
+            console.table(res)
+            updateEmployeeRole(employees, roles)
+        }
+    })
+}
+
+const updateEmployeeRole = (employees, roles) => {
     return inquirer.prompt ([
         {
-            type: "input",
+            type: "list",
             message: "Which employee do you want to update? ",
-            name: "employeeUpdate"
+            name: "employeeUpdate",
+            choices: employees,
         },
         {
-            type: "input",
+            type: "list",
             message: "What is their new role?",
-            name: "roleUpdate"
+            name: "roleUpdate",
+            choices: roles,
         },
     ])
     .then(newRoleUpdate => {
