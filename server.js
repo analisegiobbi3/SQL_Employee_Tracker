@@ -61,7 +61,7 @@ const viewOptions = () => {
                 addRole()
                 break
             case "add an employee":
-                addEmployee()
+                getExistingRoles();
                 break
             case "update an employee role":
                 updateEmployeeRole()
@@ -167,7 +167,24 @@ const addRole = () =>{
     })
 };
 
-const addEmployee = () =>{
+const getExistingRoles = () => {
+    const rolequery  = 'SELECT id, title, salary FROM role'
+
+    db.query(rolequery, (err, res) =>{
+        if (err){
+            console.log(err)
+        }else{
+            const roles = res.map(({ title }) => ({
+                value: id, title: `${title}`, salary: `${salary}`
+            }))
+            console.table(res)
+            addEmployee(roles)
+        }
+    })
+
+}
+
+const addEmployee = (roles) =>{
     return inquirer.prompt ([
         {
             type: 'input',
@@ -182,9 +199,10 @@ const addEmployee = () =>{
         },
 
         {
-            type: 'input',
+            type: 'list',
             name: 'role',
-            message: 'Enter employee role: ',
+            message: 'Choose a role by role id: ',
+            choices: roles,
         },
 
         {
@@ -206,6 +224,8 @@ const addEmployee = () =>{
     })
     
 }
+
+
 
 
 const updateEmployeeRole = () => {
