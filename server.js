@@ -86,8 +86,10 @@ const viewAllDep = () => {
 
 }
 
+
+// think i need to add a join in here
 const viewAllRole = () => {
-    const roleQuery = 'SELECT * FROM role;'
+    const roleQuery = 'SELECT * FROM role JOIN department ON role.department_id = department.id'
     db.query(roleQuery, (err, res) =>{
         if (err){
             console.log(err)
@@ -98,8 +100,9 @@ const viewAllRole = () => {
     })
  }
 
+ //think i need to add a join in here
  const viewAllEmployee = () => {
-    const employeeQuery = 'SELECT * FROM employee;'
+    const employeeQuery = 'SELECT * FROM employee JOIN role ON employee.role_id = role.id'
     db.query(employeeQuery, (err, res) =>{
         if (err){
             console.log(err)
