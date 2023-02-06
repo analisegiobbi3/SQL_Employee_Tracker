@@ -115,7 +115,7 @@ const viewAllRole = () => {
 
  //queries for all empolyees and joins that data with the role and department data
  const viewAllEmployee = () => {
-    const employeeQuery = 'SELECT employee.id, employee.first_name, employee.last_name, role.title AS Title, department.name AS Department, role.salary AS salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
+    const employeeQuery = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS Title, department.name AS Department, role.salary AS salary, employee.manager_id AS Manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id`
     db.query(employeeQuery, (err, res) =>{
         if (err){
             console.log(err)
