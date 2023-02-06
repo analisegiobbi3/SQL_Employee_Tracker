@@ -15,7 +15,10 @@ const db = mysql.createConnection(
     console.log(`Connected to the employeeTracker_db database.`)
   );
 
-
+//startup of application and connecting to database
+//you will need to seed your data before starting using the following commands
+//mysql -u root -p < db/schema.sql
+//mysql -u root -p < db/seeds.sql
 db.connect ((err) => {
     if (err){
         console.log(err)
@@ -34,14 +37,14 @@ db.connect ((err) => {
     }
 })
 
-
+//diplays a list of options for the database
 const viewOptions = () => {
     return inquirer.prompt ([
         {
             type: 'list',
             name: 'tableOptions',
             message: 'Query options: ',
-            choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role', 'quit'],
+            choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role', 'remove an existing employee', "remove an existing department", "remove an existing role", 'quit'],
         },
     ]).then(function({ tableOptions }){
         switch(tableOptions){
@@ -66,6 +69,15 @@ const viewOptions = () => {
             case "update an employee role":
                 getExistingEmployees()
                 break
+            case "remove an existing employee":
+                getExistingEmployeesForDelete()
+                break
+            case "remove an existing department":
+                getExistingDepartmentsForDelete()
+                break
+            case "remove an existing role":
+                getExistingRolesForDelete()
+                break
             case "quit":
                 db.end()
                 break
@@ -73,6 +85,7 @@ const viewOptions = () => {
     })
 };
 
+//queries for all departments and displays in the terminal
 const viewAllDep = () => {
    const departmentQuery = 'SELECT * FROM department;'
    db.query(departmentQuery, (err, res) =>{
@@ -87,9 +100,9 @@ const viewAllDep = () => {
 }
 
 
-// think i need to add a join in here
+//queries for all roles joined with departmenst and displays in the terminal
 const viewAllRole = () => {
-    const roleQuery = 'SELECT role.id, role.title AS Title, role.salary AS Salary, department.name AS Department FROM role JOIN department ON role.department_id = department.id'
+    const roleQuery = 'SELECT role.id, role.title AS Title, department.name AS Department, role.salary AS Salary FROM role JOIN department ON role.department_id = department.id'
     db.query(roleQuery, (err, res) =>{
         if (err){
             console.log(err)
@@ -100,9 +113,9 @@ const viewAllRole = () => {
     })
  }
 
- //think i need to add a join in here
+ //queries for all empolyees and joins that data with the role and department data
  const viewAllEmployee = () => {
-    const employeeQuery = 'SELECT employee.id, employee.first_name, employee.last_name, role.title AS Title, role.salary AS salary, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
+    const employeeQuery = 'SELECT employee.id, employee.first_name, employee.last_name, role.title AS Title, department.name AS Department, role.salary AS salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
     db.query(employeeQuery, (err, res) =>{
         if (err){
             console.log(err)
@@ -114,6 +127,7 @@ const viewAllRole = () => {
  }
 
 
+ //allow user to add a department to their database
 const addDepartment = () => {
     return inquirer.prompt ([
         {
@@ -127,13 +141,14 @@ const addDepartment = () => {
             if (err){
                 console.log(err)
             }else{
-                console.table(res);
+                console.log (`Updated database with new department, ${newDepartment.departmentName}`)
                 viewOptions()
             }
         })
     })
 };
 
+//grabs existing departments to be used for another action
 const getExistingDepartments = () => {
     const departmentQuery = 'SELECT department.id, department.name, role.salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON department.id = role.department_id'
 
@@ -152,6 +167,7 @@ const getExistingDepartments = () => {
 
 }
 
+//using existing departments this function allows you to add a role to a department
 const addRole = (departments) =>{
     return inquirer.prompt ([
         {
@@ -178,7 +194,8 @@ const addRole = (departments) =>{
             if (err){
                 console.log(err)
             }else{
-                console.table(res);
+                console.log(`Added new role, ${newRole.title}, to the database`)
+            
                 viewOptions()
             }
         })
@@ -186,6 +203,7 @@ const addRole = (departments) =>{
     })
 };
 
+//grabs existing roles for another function
 const getExistingRoles = () => {
     const rolequery  = 'SELECT role.id, role.title, role.salary FROM role'
 
@@ -203,6 +221,7 @@ const getExistingRoles = () => {
     })
 }
 
+//allows you to add an employee to and existing role
 const addEmployee = (roles) =>{
     return inquirer.prompt ([
         {
@@ -227,7 +246,7 @@ const addEmployee = (roles) =>{
         {
             type: 'input',
             name: 'manager',
-            message: 'Enter employee manager: ',
+            message: 'Enter employee manager id: ',
         },
     ])
     .then(newEmployee =>{
@@ -244,6 +263,7 @@ const addEmployee = (roles) =>{
     
 }
 
+//grabs existing employees for another function
 const getExistingEmployees = () => {
     const employeeQuery = 'SELECT * FROM employee JOIN role ON employee.role_id = role.id'
 
@@ -260,6 +280,7 @@ const getExistingEmployees = () => {
     })
 }
 
+//grabs existing roles for another function 
 const getEmployeeRoles = (employees) => {
     const rolequery  = 'SELECT id, title, salary FROM role'
 
@@ -276,6 +297,7 @@ const getEmployeeRoles = (employees) => {
     })
 }
 
+//allows you to update an employee with a new role
 const updateEmployeeRole = (employees, roles) => {
     return inquirer.prompt ([
         {
@@ -304,4 +326,114 @@ const updateEmployeeRole = (employees, roles) => {
     }) 
 }
 
+//the following functions allow you to delete an employee, role, and department 
+const getExistingEmployeesForDelete = () => {
+    const employeeQuery = 'SELECT * FROM employee JOIN role ON employee.role_id = role.id'
 
+    db.query(employeeQuery, (err, res) => {
+        if (err){
+            console.log(err)
+        }else{
+            const employees  = res.map(({ id, first_name, last_name}) => ({
+                value: id, name: `${first_name} ${last_name}`
+            }))
+            console.table(res)
+            deleteEmployee(employees)
+        }
+    })
+}
+
+const deleteEmployee = (employees) => {
+    return inquirer.prompt ([
+        {
+            type: "list",
+            message: "Which employee do you want to remove? ",
+            name: "employeeUpdate",
+            choices: employees,
+        },
+    ]).then(deleteEmployee => {
+        console.log(deleteEmployee)
+        db.query('DELETE FROM employee WHERE id = ?', [deleteEmployee.employeeUpdate], (err, res) =>{
+            if (err){
+                console.log(err)
+            }else{
+                console.table(res)
+                viewOptions()
+            }
+        })
+    })
+}
+
+const getExistingDepartmentsForDelete = () => {
+    const employeeQuery = 'SELECT * FROM department'
+
+    db.query(employeeQuery, (err, res) => {
+        if (err){
+            console.log(err)
+        }else{
+            const departments  = res.map(({ id, name}) => ({
+                value: id, name: `${name}`
+            }))
+            console.table(res)
+            deleteDepartment(departments)
+        }
+    })
+}
+
+const deleteDepartment = (employees) => {
+    return inquirer.prompt ([
+        {
+            type: "list",
+            message: "Which Department do you want to remove? ",
+            name: "departmentRemoval",
+            choices: employees,
+        },
+    ]).then(deleteDepartment => {
+        console.log(deleteDepartment)
+        db.query('DELETE FROM department WHERE id = ?', [deleteDepartment.departmentRemoval], (err, res) =>{
+            if (err){
+                console.log(err)
+            }else{
+                console.table(res)
+                viewOptions()
+            }
+        })
+    })
+}
+
+const getExistingRolesForDelete = () => {
+    const roleQuery = 'SELECT * FROM role'
+
+    db.query(roleQuery, (err, res) => {
+        if (err){
+            console.log(err)
+        }else{
+            const roles = res.map(({ id, title, salary }) => ({
+                value: id, name: `${title}`, salary: `${salary}`
+            }))
+            console.table(res)
+            deleteRole(roles)
+        }
+    })
+}
+
+const deleteRole = (roles) => {
+    return inquirer.prompt ([
+        {
+            type: "list",
+            message: "Which role do you want to remove? ",
+            name: "roleRemoval",
+            choices: roles,
+        },
+    ]).then(deleteRole=> {
+        console.log(deleteRole)
+        db.query('DELETE FROM department WHERE id = ?', [deleteRole.roleRemoval], (err, res) =>{
+            if (err){
+                console.log(err)
+            }else{
+                console.table(res)
+                viewOptions()
+            }
+        })
+    })
+}

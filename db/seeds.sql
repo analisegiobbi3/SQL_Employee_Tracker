@@ -5,7 +5,8 @@ VALUES
     ("Engineering"),
     ("Sales"),
     ("DevOps"),
-    ("Marketing");
+    ("Marketing"),
+    ("Finance");
 
 
 INSERT INTO role (title, salary, department_id)
@@ -18,7 +19,9 @@ VALUES
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-    ("Jane", "Doe", 1, 1),
+    ("Jane", "Doe", 1, 2),
     ("John", "Smith", 2, 4),
-    ("Chris", "Bills", 4, 1),
+    ("Chris", "Bills", 4, 8),
+    ("Mark", "Driver", 6, 8),
+    ("Lily", "Williams", 1, 3),
     ("Sherry", "King", 3, 2);
