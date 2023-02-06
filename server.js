@@ -115,7 +115,14 @@ const viewAllRole = () => {
 
  //queries for all empolyees and joins that data with the role and department data
  const viewAllEmployee = () => {
-    const employeeQuery = `SELECT employee.id, employee.first_name, employee.last_name, role.title AS Title, department.name AS Department, role.salary AS salary, employee.manager_id AS Manager FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id`
+    const employeeQuery = `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
+    FROM employee e
+    LEFT JOIN role r
+      ON e.role_id = r.id
+    LEFT JOIN department d
+    ON d.id = r.department_id
+    LEFT JOIN employee m
+      ON m.id = e.manager_id`
     db.query(employeeQuery, (err, res) =>{
         if (err){
             console.log(err)
