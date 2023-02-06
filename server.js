@@ -187,20 +187,20 @@ const addRole = (departments) =>{
 };
 
 const getExistingRoles = () => {
-    const rolequery  = 'SELECT id, title, salary FROM role'
+    const rolequery  = 'SELECT role.id, role.title, role.salary FROM role'
 
-    db.query(rolequery, (err, res) =>{
+    db.query(rolequery, (err, res) => {
         if (err){
             console.log(err)
         }else{
-            const roles = res.map(({ id, title, salary }) => ({
-                value: id, title: `${title}`, salary: `${salary}`
+            const roles  = res.map(({ id, title, salary }) => ({
+               value: id, title: `${title}`, salary: `${salary}`
             }))
             console.table(res)
             addEmployee(roles)
         }
-    })
 
+    })
 }
 
 const addEmployee = (roles) =>{
@@ -231,7 +231,7 @@ const addEmployee = (roles) =>{
         },
     ])
     .then(newEmployee =>{
-        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [newEmployee.firstName, newEmployee.lastName, newEmployee.role, newEmployee.manager], (err, res) =>{
+        db.query('INSERT INTO employee SET ?', {first_name: newEmployee.firstName, last_name: newEmployee.lastName, role_id: newEmployee.role, manager_id: newEmployee.manager}, (err, res) =>{
             if (err){
                 console.log(err)
             }else{
