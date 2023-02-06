@@ -89,7 +89,7 @@ const viewAllDep = () => {
 
 // think i need to add a join in here
 const viewAllRole = () => {
-    const roleQuery = 'SELECT * FROM role JOIN department ON role.department_id = department.id'
+    const roleQuery = 'SELECT role.id, role.title AS Title, role.salary AS Salary, department.name AS Department FROM role JOIN department ON role.department_id = department.id'
     db.query(roleQuery, (err, res) =>{
         if (err){
             console.log(err)
@@ -102,7 +102,7 @@ const viewAllRole = () => {
 
  //think i need to add a join in here
  const viewAllEmployee = () => {
-    const employeeQuery = 'SELECT * FROM employee JOIN role ON employee.role_id = role.id'
+    const employeeQuery = 'SELECT employee.id, employee.first_name, employee.last_name, role.title AS Title, role.salary AS salary, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id'
     db.query(employeeQuery, (err, res) =>{
         if (err){
             console.log(err)
@@ -135,14 +135,14 @@ const addDepartment = () => {
 };
 
 const getExistingDepartments = () => {
-    const departmentQuery = 'SELECT id, name FROM department'
+    const departmentQuery = 'SELECT department.id, department.name, role.salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON department.id = role.department_id'
 
     db.query(departmentQuery, (err, res) => {
         if (err){
             console.log(err)
         }else{
-            const departments  = res.map(({ id, name}) => ({
-                value: id, name: `${name}`
+            const departments  = res.map(({ id, name }) => ({
+               value: id, name: `${name}`
             }))
             console.table(res)
             addRole(departments)
@@ -156,7 +156,7 @@ const addRole = (departments) =>{
     return inquirer.prompt ([
         {
             type: 'input',
-            name: 'name',
+            name: 'title',
             message: 'Enter role: ',
         },
 
@@ -174,7 +174,7 @@ const addRole = (departments) =>{
         },
     ])
     .then(newRole =>{
-        db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [newRole.name, newRole.salary, newRole.department], (err, res) =>{
+        db.query('INSERT INTO role SET ?', {title: newRole.title, salary: newRole.salary,  department_id: newRole.department}, (err, res) =>{
             if (err){
                 console.log(err)
             }else{
