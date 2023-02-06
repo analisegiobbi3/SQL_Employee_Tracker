@@ -169,7 +169,7 @@ const addRole = (departments) =>{
         {
             type: 'list',
             name: 'department',
-            message: 'Choose employee department by id: ',
+            message: 'Choose employee department: ',
             choices: departments
         },
     ])
@@ -194,7 +194,7 @@ const getExistingRoles = () => {
             console.log(err)
         }else{
             const roles  = res.map(({ id, title, salary }) => ({
-               value: id, title: `${title}`, salary: `${salary}`
+               value: id, name: `${title}`, salary: `${salary}`
             }))
             console.table(res)
             addEmployee(roles)
@@ -220,7 +220,7 @@ const addEmployee = (roles) =>{
         {
             type: 'list',
             name: 'role',
-            message: 'Choose a role by role id: ',
+            message: 'Choose a role: ',
             choices: roles,
         },
 
@@ -252,7 +252,7 @@ const getExistingEmployees = () => {
             console.log(err)
         }else{
             const employees  = res.map(({ id, first_name, last_name}) => ({
-                value: id, first_name: `${first_name}`, last_name: `${last_name}`
+                value: id, name: `${first_name} ${last_name}`
             }))
             console.table(res)
             getEmployeeRoles(employees)
@@ -268,7 +268,7 @@ const getEmployeeRoles = (employees) => {
             console.log(err)
         }else{
             const roles = res.map(({ id, title, salary }) => ({
-                value: id, title: `${title}`, salary: `${salary}`
+                value: id, name: `${title}`, salary: `${salary}`
             }))
             console.table(res)
             updateEmployeeRole(employees, roles)
@@ -292,7 +292,8 @@ const updateEmployeeRole = (employees, roles) => {
         },
     ])
     .then(newRoleUpdate => {
-        db.query('UPDATE employee SET role_id = ? WHERE first_name = ?', [newRoleUpdate.roleUpdate, newRoleUpdate.employeeUpdate], (err, res) =>{
+        console.log(newRoleUpdate)
+        db.query('UPDATE employee SET role_id = ? WHERE id = ?', [newRoleUpdate.roleUpdate, newRoleUpdate.employeeUpdate], (err, res) =>{
             if (err){
                 console.log(err)
             }else{

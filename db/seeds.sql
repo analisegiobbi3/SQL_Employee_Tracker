@@ -13,7 +13,7 @@ VALUES
     ("Software Engingeer", 150000, 1),
     ("Sales Rep", 80000, 2),
     ("Release Manager", 120000, 3),
-    ("Socail Media Manager", 60000, 4);
+    ("Social Media Manager", 60000, 4);
 
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
