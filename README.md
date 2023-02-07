@@ -40,9 +40,10 @@
 
   5. Finally, you can delete departments, roles, and employees
 
-  For a demo, see video below
+  For a demo, see video below:
 
-  Add Video Here
+  https://user-images.githubusercontent.com/59839160/217292476-bea94b7d-fa8c-40c0-b026-d67fa0bfe56a.mp4
+
 
   ## [License](#table-of-contents)
   n/a
