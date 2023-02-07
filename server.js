@@ -144,7 +144,7 @@ const addDepartment = () => {
         },
     ])
     .then(newDepartment =>{
-        db.query('INSERT INTO department (name) VALUES (?)', [newDepartment.departmentName], (err, res) =>{
+        db.query('INSERT INTO department SET ?', {name : newDepartment.departmentName}, (err, res) =>{
             if (err){
                 console.log(err)
             }else{
@@ -157,7 +157,7 @@ const addDepartment = () => {
 
 //grabs existing departments to be used for another action
 const getExistingDepartments = () => {
-    const departmentQuery = 'SELECT department.id, department.name, role.salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON department.id = role.department_id'
+    const departmentQuery = 'SELECT * FROM department'
 
     db.query(departmentQuery, (err, res) => {
         if (err){
@@ -212,7 +212,7 @@ const addRole = (departments) =>{
 
 //grabs existing roles for another function
 const getExistingRoles = () => {
-    const rolequery  = 'SELECT role.id, role.title, role.salary FROM role'
+    const rolequery  = 'SELECT * FROM role'
 
     db.query(rolequery, (err, res) => {
         if (err){
